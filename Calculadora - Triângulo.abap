@@ -93,5 +93,7 @@ IF v_status = abap_false.
     WRITE: TEXT-e01.
 
   ENDIF.  
+
+
 	  
 	  
