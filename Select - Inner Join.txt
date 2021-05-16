@@ -1,0 +1,59 @@
+REPORT ZRMAY16_INNERJOIN.
+
+
+SELECTION-SCREEN BEGIN OF BLOCK main WITH FRAME TITLE TEXT-t01.
+  SELECT-OPTIONS: s_client FOR ZTMAY16_CLIENTES-COD_CLIENTE.           
+SELECTION-SCREEN END OF BLOCK main.
+
+
+TABLES: ZTMAY16_CLIENTES. "Clientes
+
+
+TYPES: BEGIN OF ty_clientes,
+         COD_CLIENTE TYPE Z16COD_CLIENTE, "ZTMAY16_CLIENTES
+         NOME        TYPE Z16NOME,        "ZTMAY16_CLIENTES
+         SOBRENOME   TYPE Z16SOBRENOME,   "ZTMAY16_CLIENTES
+         DDD         TYPE Z16DDD,         "ZTMAY16_TELEFONE
+         TELEFONE    TYPE Z16TELEFONE,    "ZTMAY16_TELEFONE
+         CELULAR     TYPE Z16CELULAR,     "ZTMAY16_TELEFONE
+         CEP         TYPE Z16CEP,         "ZTMAY16_ENDERECO
+         CIDADE      TYPE Z16CIDADE,      "ZTMAY16_ENDERECO
+         BAIRRO      TYPE Z16BAIRRO,      "ZTMAY16_ENDERECO
+         LOGRADOURO  TYPE Z16LOGRADOURO,  "ZTMAY16_ENDERECO
+         NUMERO      TYPE Z16NUMERO,      "ZTMAY16_ENDERECO
+         CPF         TYPE Z16CPF,         "ZTMAY16_DOC
+         RG          TYPE Z16RG,          "ZTMAY16_DOC
+         CRNM        TYPE Z16CRNM,        "ZTMAY16_DOC
+       END OF ty_clientes.
+	   
+	   
+DATA:  t_client TYPE TABLE OF ty_clientes.
+
+
+	SELECT a~COD_CLIENTE
+           a~NOME
+           a~SOBRENOME
+           b~DDD
+           b~TELEFONE
+           b~CELULAR
+           c~CEP
+           c~CIDADE
+           c~BAIRRO
+           c~LOGRADOURO
+           c~NUMERO
+           d~CPF
+           d~RG
+           d~CRNM
+      FROM ZTMAY16_CLIENTES AS a
+INNER JOIN ZTMAY16_TELEFONE AS b
+        ON a~COD_CLIENTE EQ b~CD_TELEFONE
+INNER JOIN ZTMAY16_ENDERECO AS c
+        ON a~COD_CLIENTE EQ c~COD_ENDERENCO
+INNER JOIN ZTMAY16_DOC      AS d
+        ON a~COD_CLIENTE EQ d~COD_DOCUMENTO
+INTO TABLE t_client
+     WHERE a~COD_CLIENTE IN s_client.
+
+     IF sy-subrc = 0.
+       cl_demo_output=>display( t_client ).
+     ENDIF.
